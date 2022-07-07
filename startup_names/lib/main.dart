@@ -10,9 +10,15 @@ class MyApp extends StatelessWidget {
 
   @override //método de construção
   Widget build(BuildContext context) {
-    return const MaterialApp(         
+    return MaterialApp(         
       title: 'Startup Name Generator',
-      home: RandomWords(),            
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 244, 177, 54),
+          foregroundColor: Colors.white,
+        ),
+      ),   
+      home: const RandomWords(),            
     );
   }
 }
@@ -96,7 +102,7 @@ class _RandomWordsState extends State<RandomWords> {
 
             trailing: Icon( //direita
               alreadySaved ? Icons.favorite : Icons.favorite_border,
-              color: alreadySaved ? Colors.red : null,
+              color: alreadySaved ? const Color.fromARGB(255, 255, 115, 0) : null,
               semanticLabel: alreadySaved ? 'Remove from saved' : 'Save', //análogo ao alt
             ),
 
