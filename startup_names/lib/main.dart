@@ -124,7 +124,7 @@ class _RandomWordsState extends State<RandomWords> {
                       });
                     },
                   ),
-
+                  
                   IconButton(
                     icon: const Icon(
                       CupertinoIcons.delete,
@@ -135,6 +135,7 @@ class _RandomWordsState extends State<RandomWords> {
                         if (alreadySaved) {
                           _saved.remove(_suggestions[index]);
                         }
+                        _suggestions.remove(_suggestions[index]); //remove do array
                       });
                     },
                   ),
