@@ -1,4 +1,5 @@
 import 'package:english_words/english_words.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,15 +11,15 @@ class MyApp extends StatelessWidget {
 
   @override //método de construção
   Widget build(BuildContext context) {
-    return MaterialApp(         
+    return MaterialApp(
       title: 'Startup Name Generator',
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: Color.fromARGB(255, 244, 177, 54),
           foregroundColor: Colors.white,
         ),
-      ),   
-      home: const RandomWords(),            
+      ),
+      home: const RandomWords(),
     );
   }
 }
@@ -68,11 +69,11 @@ class _RandomWordsState extends State<RandomWords> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
-      appBar: AppBar(  
+    return Scaffold(
+      appBar: AppBar(
         title: const Text('Startup Name Generator'),
         actions: [
           IconButton(
@@ -82,7 +83,6 @@ class _RandomWordsState extends State<RandomWords> {
           ),
         ],
       ),
-    
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
@@ -93,29 +93,53 @@ class _RandomWordsState extends State<RandomWords> {
             _suggestions.addAll(generateWordPairs().take(10));
           }
 
-          final alreadySaved = _saved.contains(_suggestions[index]); //análogo a um state
+          final alreadySaved =
+              _saved.contains(_suggestions[index]); //análogo a um state
           return ListTile(
-            title: Text(
-              _suggestions[index].asPascalCase,
-              style: _biggerFont,
-            ),
+              title: Text(
+                _suggestions[index].asPascalCase,
+                style: _biggerFont,
+              ),
+              trailing: Wrap(
+                // spacing: -10, não funciona
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      alreadySaved ? Icons.favorite : Icons.favorite_border,
+                      color: alreadySaved
+                          ? const Color.fromARGB(255, 255, 115, 0)
+                          : null,
+                      semanticLabel: alreadySaved
+                          ? 'Desfavoritar'
+                          : 'Salvo', //análogo ao alt
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        //lógica da troca de estado
+                        if (alreadySaved) {
+                          _saved.remove(_suggestions[index]);
+                        } else {
+                          _saved.add(_suggestions[index]);
+                        }
+                      });
+                    },
+                  ),
 
-            trailing: Icon( //direita
-              alreadySaved ? Icons.favorite : Icons.favorite_border,
-              color: alreadySaved ? const Color.fromARGB(255, 255, 115, 0) : null,
-              semanticLabel: alreadySaved ? 'Remove from saved' : 'Save', //análogo ao alt
-            ),
-
-            onTap: () { //onClick
-              setState(() { //lógica da troca de estado
-                if (alreadySaved) {
-                  _saved.remove(_suggestions[index]);
-                } else {
-                  _saved.add(_suggestions[index]);
-                }
-              });               
-            },
-          );
+                  IconButton(
+                    icon: const Icon(
+                      CupertinoIcons.delete,
+                      semanticLabel: 'Deletado',
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if (alreadySaved) {
+                          _saved.remove(_suggestions[index]);
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ));
         },
       ),
     );
