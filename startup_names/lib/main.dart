@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 //Cria widget com estado
 class RandomWords extends StatefulWidget {
-  const RandomWords({super.key});
+  const RandomWords({Key? key}) : super(key: key);
 
   @override
   State<RandomWords> createState() => _RandomWordsState();
@@ -34,36 +34,25 @@ class RandomWords extends StatefulWidget {
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _biggerFont = const TextStyle(fontSize: 18);
-
+  
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return Text(wordPair.asPascalCase);
-  }
-
-  Widget _buildSuggestions() {
     return ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd) {
-            return Divider();
-          }
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        if (i.isOdd) return const Divider();
 
-          return _buildRow(_suggestions[index]);
+        final index = i ~/ 2;
+        if (index >= _suggestions.length) {
+          _suggestions.addAll(generateWordPairs().take(10));
         }
-    );
-  }
-
-  Widget _buildRow(WordPair pair) {
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
+        return ListTile(
+          title: Text(
+            _suggestions[index].asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      },
     );
   }
 }
