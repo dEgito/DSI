@@ -90,6 +90,7 @@ class _RandomWordsState extends State<RandomWords> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color.fromARGB(255, 244, 177, 54),
           child:
               Icon(_viewType == ViewType.grid ? Icons.grid_view : Icons.list),
           onPressed: () {
@@ -102,17 +103,29 @@ class _RandomWordsState extends State<RandomWords> {
             }
             setState(() {});
           }),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return const Divider();
+      body: _buildSuggestions(),
+    );
+  }
 
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
+  Widget _buildSuggestions() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(4.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _colum,
+        childAspectRatio: _viewType == ViewType.grid ? 1 : 10,
+      ),
+      itemBuilder: (context, i) {
+        if (i.isOdd && _viewType == ViewType.list) {
+          return const Divider();
+        }
 
-          final alreadySaved =
+        final index = i ~/ 1;
+        if (index >= _suggestions.length) {
+          _suggestions.addAll(generateWordPairs().take(10));
+        }
+
+        //função favoritar
+        final alreadySaved =
               _saved.contains(_suggestions[index]); //análogo a um state
           return ListTile(
             title: Text(
@@ -139,27 +152,7 @@ class _RandomWordsState extends State<RandomWords> {
               });
             },
           );
-        },
-      ),
-    );
-  }
 
-  Widget _buildSuggestions() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _colum,
-        childAspectRatio: _viewType == ViewType.grid ? 1 : 10,
-      ),
-      itemBuilder: (context, i) {
-        if (i.isOdd && _viewType == ViewType.list) {
-          return const Divider();
-        }
-
-        final index = i ~/ 2;
-        if (index >= _suggestions.length) {
-          _suggestions.addAll(generateWordPairs().take(10));
-        }
         return _buildRow(_suggestions[index]);
       },
     );
@@ -179,10 +172,8 @@ class _RandomWordsState extends State<RandomWords> {
       return ListTile(
         title: Text(
           pair.asPascalCase,
-          // style: _biggerFont,
         ),
       );
     }
   }
-
 }
