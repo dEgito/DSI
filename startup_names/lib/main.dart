@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+enum ViewType { grid, list }
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +40,9 @@ class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
   final _biggerFont = const TextStyle(fontSize: 18);
+
+  ViewType _viewType = ViewType.list;
+  int _colum = 1;
 
   //salva os favoritos na outra aba
   void _pushSaved() {
@@ -83,66 +90,91 @@ class _RandomWordsState extends State<RandomWords> {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return const Divider();
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color.fromARGB(255, 244, 177, 54),
+          child:
+              Icon(_viewType == ViewType.grid ? Icons.grid_view : Icons.list),
+          onPressed: () {
+            if (_viewType == ViewType.grid) {
+              _viewType = ViewType.list;
+              _colum = 1;
+            } else {
+              _viewType = ViewType.grid;
+              _colum = 2;
+            }
+            setState(() {});
+          }),
+      body: _buildSuggestions(),
+    );
+  }
 
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-
-          final alreadySaved =
-              _saved.contains(_suggestions[index]); //análogo a um state
-          return ListTile(
-              title: Text(
-                _suggestions[index].asPascalCase,
-                style: _biggerFont,
-              ),
-              trailing: Wrap(
-                // spacing: -10, não funciona
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      alreadySaved ? Icons.favorite : Icons.favorite_border,
-                      color: alreadySaved
-                          ? const Color.fromARGB(255, 255, 115, 0)
-                          : null,
-                      semanticLabel: alreadySaved
-                          ? 'Desfavoritar'
-                          : 'Salvo', //análogo ao alt
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        //lógica da troca de estado
-                        if (alreadySaved) {
-                          _saved.remove(_suggestions[index]);
-                        } else {
-                          _saved.add(_suggestions[index]);
-                        }
-                      });
-                    },
-                  ),
-                  
-                  IconButton(
-                    icon: const Icon(
-                      CupertinoIcons.delete,
-                      semanticLabel: 'Deletado',
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        if (alreadySaved) {
-                          _saved.remove(_suggestions[index]);
-                        }
-                        _suggestions.remove(_suggestions[index]); //remove do array
-                      });
-                    },
-                  ),
-                ],
-              ));
-        },
+  Widget _buildSuggestions() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(4.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _colum,
+        childAspectRatio: _viewType == ViewType.grid ? 1 : 10,
       ),
+      itemBuilder: (context, i) {
+        if (i.isOdd && _viewType == ViewType.list) {
+          return const Divider();
+        }
+
+        final index = i ~/ 1;
+        if (index >= _suggestions.length) {
+          _suggestions.addAll(generateWordPairs().take(10));
+        }
+
+        //função favoritar
+        final alreadySaved =
+            _saved.contains(_suggestions[index]); //análogo a um state
+        return ListTile(
+            title: Text(
+              _suggestions[index].asPascalCase,
+              style: _biggerFont,
+            ),
+            trailing: Wrap(
+              // spacing: -10, não funciona
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    alreadySaved ? Icons.favorite : Icons.favorite_border,
+                    color: alreadySaved
+                        ? const Color.fromARGB(255, 255, 115, 0)
+                        : null,
+                    semanticLabel: alreadySaved
+                        ? 'Desfavoritar'
+                        : 'Salvo', //análogo ao alt
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      //lógica da troca de estado
+                      if (alreadySaved) {
+                        _saved.remove(_suggestions[index]);
+                      } else {
+                        _saved.add(_suggestions[index]);
+                      }
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.delete,
+                    semanticLabel: 'Deletado',
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (alreadySaved) {
+                        _saved.remove(_suggestions[index]);
+                      }
+                      _suggestions
+                          .remove(_suggestions[index]); //remove do array
+                    });
+                  },
+                ),
+              ],
+            ));
+      },
     );
   }
 }
