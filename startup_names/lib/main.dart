@@ -193,21 +193,41 @@ class _RandomWordsState extends State<RandomWords> {
                     const SizedBox(
                       height: 32,
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
-                            setState(() {
-                              var pairUpdated =
-                                  WordPair(firstWord!, secondWord!);
-                              _suggestions.insert(index, pairUpdated);
-                              Navigator.of(context).pop();
-                            });
-                          }
-                        },
-                        child: const Padding(
-                            padding: EdgeInsets.all(15),
-                            child: Text('Salvar'))),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                setState(() {
+                                  var pairUpdated =
+                                      WordPair(firstWord!, secondWord!);
+                                  _suggestions.insert(index, pairUpdated);
+                                  Navigator.of(context).pop();
+                                });
+                              }
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Text('Salvar'))),
+                        const SizedBox(width: 32,),
+                        ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                setState(() {
+                                  var pairUpdated =
+                                      WordPair(firstWord!, secondWord!);
+                                  _suggestions.insert(index, pairUpdated);
+                                  Navigator.of(context).pop();
+                                });
+                              }
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Text('Adicionar'))),
+                      ],
+                    )
                   ],
                 )),
           ));
