@@ -17,16 +17,15 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: Colors.white,
       ),
-      home: RandomWords(),
+      home: const RandomWords(),
     );
   }
 }
 
 class RandomWords extends StatefulWidget {
-  //static const routeName = '/';
-
-  // cria o estado da pagina RandomWords (pagina home)
+  const RandomWords({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _RandomWordsState createState() => _RandomWordsState();
 }
 
@@ -46,7 +45,12 @@ class _RandomWordsState extends State<RandomWords> {
         title: const Text('Startup Name Generator'),
         actions: [
           IconButton(
-              icon: const Icon(Icons.list, color: Colors.lightBlue),
+              icon: const Icon(Icons.plus_one,
+                  color: Color.fromARGB(255, 244, 177, 54)),
+              onPressed: _pushSaved),
+          IconButton(
+              icon: const Icon(Icons.list,
+                  color: Color.fromARGB(255, 244, 177, 54)),
               onPressed: _pushSaved),
         ],
       ),
@@ -87,7 +91,7 @@ class _RandomWordsState extends State<RandomWords> {
           }
 
           final alreadySaved =
-            _saved.contains(_suggestions[index]); //análogo a um state
+              _saved.contains(_suggestions[index]); //análogo a um state
 
           return ListTile(
             title: Text(
@@ -186,7 +190,9 @@ class _RandomWordsState extends State<RandomWords> {
                       },
                       onSaved: (value) => secondWord = value,
                     ),
-                    const SizedBox(height: 32,),
+                    const SizedBox(
+                      height: 32,
+                    ),
                     ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
@@ -236,5 +242,72 @@ class _RandomWordsState extends State<RandomWords> {
         },
       ),
     );
+  }
+
+  void _pushNew(BuildContext context, WordPair pair, int index) {
+    String? firstWord;
+    String? secondWord;
+    final formKey = GlobalKey<FormState>();
+
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+      return Scaffold(
+          appBar: AppBar(title: const Text('Edição de palavra')),
+          body: Container(
+            color: Colors.black12,
+            padding: const EdgeInsets.all(20.0),
+            alignment: Alignment.center,
+            child: Form(
+                key: formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: firstWord,
+                      decoration: const InputDecoration(
+                        hintText: 'Primeira palavra',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Campo obrigatório';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => firstWord = value,
+                    ),
+                    TextFormField(
+                      initialValue: secondWord,
+                      decoration: const InputDecoration(
+                        hintText: 'Segunda palavra',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Campo obrigatório';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => secondWord = value,
+                    ),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            setState(() {
+                              var pairUpdated =
+                                  WordPair(firstWord!, secondWord!);
+                              _suggestions.insert(index, pairUpdated);
+                              Navigator.of(context).pop();
+                            });
+                          }
+                        },
+                        child: const Padding(
+                            padding: EdgeInsets.all(15),
+                            child: Text('Salvar'))),
+                  ],
+                )),
+          ));
+    }));
   }
 }
