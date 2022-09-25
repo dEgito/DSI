@@ -1,12 +1,12 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:startup_names/pages/editWord.dart';
 
 enum ViewType { grid, list }
 
 class RandomWords extends StatefulWidget {
   const RandomWords({Key? key}) : super(key: key);
-
   @override
   State<RandomWords> createState() => _RandomWordsState();
 }
@@ -85,6 +85,7 @@ class _RandomWordsState extends State<RandomWords> {
 
   Widget _buildSuggestions() {
     return GridView.builder(
+      itemCount: _viewType == ViewType.grid ? 20 : 40,
       padding: const EdgeInsets.all(2),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: _colum,
@@ -101,19 +102,18 @@ class _RandomWordsState extends State<RandomWords> {
         }
 
         //função favoritar
-        final alreadySaved = _saved.contains(_suggestions[index]); //análogo a um state
+        final alreadySaved =
+            _saved.contains(_suggestions[index]); //análogo a um state
         return ListTile(
             title: TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/edit'),
-              style: TextButton.styleFrom(
-                
-              ),
+              onPressed: () => Navigator.pushNamed(context, '/edit',
+                  arguments: {'words': _suggestions}),
+              style: TextButton.styleFrom(),
               child: Text(
                 _suggestions[index].asPascalCase,
                 style: _biggerFont,
               ),
             ),
-            
             trailing: Wrap(
               // spacing: -10, não funciona
               children: <Widget>[

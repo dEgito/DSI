@@ -8,6 +8,12 @@ void main() {
   runApp(const MyApp());
 }
 
+class Arguments {
+  final String word;
+  final String editedWord;
+  Arguments(this.word, this.editedWord);
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -22,7 +28,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const RandomWords(),
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         '/edit': (BuildContext context) => const EditWordPage(),
       },
     );
